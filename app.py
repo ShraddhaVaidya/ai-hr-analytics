@@ -39,9 +39,12 @@ h1, h2, h3 {
 """, unsafe_allow_html=True)
 
 
-client = Groq(
-    api_key = os.getenv("GROQ_API_KEY")
-)
+api_key = os.getenv("GROQ_API_KEY")
+
+if not api_key:
+    api_key = st.secrets["GROQ_API_KEY"]
+
+client = Groq(api_key=api_key)
 
 
 df = pd.read_csv("employees.csv")
