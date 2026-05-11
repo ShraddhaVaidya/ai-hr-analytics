@@ -65,6 +65,9 @@ else:
 # =========================
 
 model = pickle.load(open("model.pkl", "rb"))
+model_columns = pickle.load(
+    open("model_columns.pkl", "rb")
+)
 
 # =========================
 # SIDEBAR
@@ -250,32 +253,47 @@ elif selected == "Prediction":
 
     if st.button("Predict Attrition"):
 
-        risk_score = np.random.uniform(0.2, 0.95)
+        input_df = pd.DataFrame({
 
-        if risk_score > 0.5:
+            'Age': [age],
+            'MonthlyIncome': [monthly_income],
+            'DistanceFromHome': [distance],
+            'YearsAtCompany': [years],
+            'Gender': [gender],
+            'MaritalStatus': ['Single'],
+            'OverTime': [overtime],
+            'JobRole': ['Sales Executive'],
+            'JobSatisfaction': [job_satisfaction],
+            'WorkLifeBalance': [work_life]
+
+        })
+
+        input_df = pd.get_dummies(input_df)
+
+        input_df = input_df.reindex(
+            columns=model_columns,
+            fill_value=0
+        )
+
+        prediction = model.predict(input_df)[0]
+
+        probability = model.predict_proba(
+            input_df
+        )[0][1]
+
+        if prediction == 1:
 
             st.error(
                 f"⚠ Employee likely to leave "
-                f"(Risk Score: {risk_score:.2f})"
+                f"(Risk Score: {probability:.2f})"
             )
-
-            st.subheader("Suggested Retention Strategies")
-
-            st.info("""
-            • Improve work-life balance  
-            • Review compensation  
-            • Reduce overtime  
-            • Increase employee engagement  
-            • Conduct HR counseling sessions  
-            """)
 
         else:
 
             st.success(
                 f"✅ Employee likely to stay "
-                f"(Confidence: {1-risk_score:.2f})"
+                f"(Confidence: {1-probability:.2f})"
             )
-
 # =========================
 # BULK ANALYSIS
 # =========================
@@ -293,11 +311,40 @@ elif selected == "Bulk Analysis":
 
         bulk_df = pd.read_csv(uploaded_file)
 
-        predictions = np.random.choice(
-            ["Yes", "No"],
-            size=len(bulk_df)
+# Select required features
+
+        bulk_input = bulk_df[[
+            'Age',
+            'MonthlyIncome',
+            'DistanceFromHome',
+            'YearsAtCompany',
+            'Gender',
+            'MaritalStatus',
+            'OverTime',
+            'JobRole',
+            'JobSatisfaction',
+            'WorkLifeBalance'
+        ]]
+
+        # Apply same encoding
+        bulk_input = pd.get_dummies(bulk_input)
+
+        # Match training columns
+        bulk_input = bulk_input.reindex(
+            columns=model_columns,
+            fill_value=0
         )
 
+        # Real predictions
+        predictions = model.predict(bulk_input)
+
+        # Convert predictions
+        predictions = [
+            "Yes" if pred == 1 else "No"
+            for pred in predictions
+        ]
+
+        # Add prediction column
         bulk_df["Predicted Attrition"] = predictions
 
         st.dataframe(bulk_df)
