@@ -47,7 +47,18 @@ if not api_key:
 client = Groq(api_key=api_key)
 
 
-df = pd.read_csv("employees.csv")
+uploaded_file = st.sidebar.file_uploader(
+    "Upload Employee Dataset",
+    type=["csv"]
+)
+
+if uploaded_file:
+
+    df = pd.read_csv(uploaded_file)
+
+else:
+
+    df = pd.read_csv("employees.csv")
 
 # =========================
 # LOAD MODEL
