@@ -3,10 +3,10 @@
 ## ✨ Overview
 This project is a vibrant and interactive HR analytics web app built with Streamlit. It helps organizations understand employee attrition, predict potential turnover, explore insights through engaging visual dashboards, and get AI-powered guidance using a large language model.
 
-## � Live Demo
-Visit the deployed app here: https://ai-hr-analytics-w5egtbpdshmsocgnuh9pze.streamlit.app/
+##  Live Demo
+AI HR Analytics: [Click here](https://ai-hr-analytics-w5egtbpdshmsocgnuh9pze.streamlit.app/)
 
-## �🌟 What This Project Does
+## 🌟 What This Project Does
 The platform gives HR teams a smart, user-friendly experience to:
 - 📊 view key employee attrition metrics
 - 📈 visualize employee trends and patterns
